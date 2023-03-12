@@ -9,7 +9,9 @@ import {
   FormControl,
   Button,
 } from "react-bootstrap";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import MovieList from "./components/MovieList/MovieList";
+import MovieDetails from "./components/MovieDetails/MovieDetails";
 
 const API_URL =
   "https://api.themoviedb.org/3/movie/popular?api_key=60f509cbcfbf32fd2ed6677aa2d75099";
@@ -20,7 +22,6 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [searchMovies, setSearchMovies] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     fetch(API_URL)
@@ -48,43 +49,50 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar bg="dark" expand="lg" variant="dark">
-        <Container fluid>
-          <Navbar.Brand href="#home">MovieDb App</Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll">
-            <Nav
-              className="me-auto my-2 my-lg-0"
-              style={{ maxHeight: "100px" }}
-              navbarScroll
-            >
-              <Nav.Link href="#trending">Trending</Nav.Link>
-            </Nav>
-            <Form onSubmit={handleSearch} className="d-flex">
-              <FormControl
-                type="search"
-                placeholder="Movie Search"
-                className="me-2"
-                aria-label="search"
-                value={searchValue}
-                onChange={handleSearchInput}
-              />
-              <Button variant="outline-success" type="submit">
-                Search
-              </Button>
-            </Form>
-          </Navbar.Collapse>
+      <Router>
+        <Navbar bg="dark" expand="lg" variant="dark">
+          <Container fluid>
+            <Navbar.Brand as={Link} to="/">
+              PeliculasInfo.com
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbarScroll" />
+            <Navbar.Collapse id="navbarScroll">
+              <Nav
+                className="me-auto my-2 my-lg-0"
+                style={{ maxHeight: "100px" }}
+                navbarScroll
+              >
+                <Nav.Link as={Link} to="/">
+                  Trending
+                </Nav.Link>
+              </Nav>
+              <Form onSubmit={handleSearch} className="d-flex">
+                <FormControl
+                  type="search"
+                  placeholder="Movie Search"
+                  className="me-2"
+                  aria-label="search"
+                  value={searchValue}
+                  onChange={handleSearchInput}
+                />
+                <Button variant="outline-success" type="submit">
+                  Search
+                </Button>
+              </Form>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+        <Container className="my-4">
+          <Routes>
+            <Route path="/" element={<MovieList movies={movies} />} />
+            <Route
+              path="/search"
+              element={<MovieList movies={searchMovies} />}
+            />
+            <Route path="/movie/:id" element={<MovieDetails />} />
+          </Routes>
         </Container>
-      </Navbar>
-      <div className="container my-4">
-        {searchValue.length > 0 && searchMovies.length > 0 && (
-          <MovieList movies={searchMovies} />
-        )}
-        {searchValue.length > 0 && searchMovies.length === 0 && (
-          <h2>No results found</h2>
-        )}
-        {!searchValue && <MovieList movies={movies} />}
-      </div>
+      </Router>
     </div>
   );
 }

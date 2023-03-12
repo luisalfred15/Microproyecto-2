@@ -35,6 +35,7 @@ function App() {
     e.preventDefault();
     try {
       const url = `${API_SEARCH}${searchValue}`;
+      console.log(url); // verificación
       const res = await fetch(url);
       const data = await res.json();
       setSearchMovies(data.results);
@@ -44,6 +45,7 @@ function App() {
   };
 
   const handleSearchInput = (e) => {
+    console.log(e.target.value); // verificación
     setSearchValue(e.target.value);
   };
 

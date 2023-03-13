@@ -35,7 +35,6 @@ function App() {
     e.preventDefault();
     try {
       const url = `${API_SEARCH}${searchValue}`;
-      console.log(url); // verificación
       const res = await fetch(url);
       const data = await res.json();
       setSearchMovies(data.results);
@@ -45,16 +44,19 @@ function App() {
   };
 
   const handleSearchInput = (e) => {
-    console.log(e.target.value); // verificación
     setSearchValue(e.target.value);
   };
+
+  const movieListProps = searchValue
+    ? { movies: searchMovies }
+    : { movies: movies };
 
   return (
     <div className="App">
       <Router>
         <Navbar bg="dark" expand="lg" variant="dark">
           <Container fluid>
-            <Navbar.Brand as={Link} to="/">
+            <Navbar.Brand as={Link} to="/" onClick={() => setSearchValue("")}>
               PeliculasInfo.com
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
@@ -64,8 +66,8 @@ function App() {
                 style={{ maxHeight: "100px" }}
                 navbarScroll
               >
-                <Nav.Link as={Link} to="/">
-                  Trending
+                <Nav.Link as={Link} to="/" onClick={() => setSearchValue("")}>
+                  Main Page
                 </Nav.Link>
               </Nav>
               <Form onSubmit={handleSearch} className="d-flex">
@@ -86,11 +88,7 @@ function App() {
         </Navbar>
         <Container className="my-4">
           <Routes>
-            <Route path="/" element={<MovieList movies={movies} />} />
-            <Route
-              path="/search"
-              element={<MovieList movies={searchMovies} />}
-            />
+            <Route path="/" element={<MovieList {...movieListProps} />} />
             <Route path="/movie/:id" element={<MovieDetails />} />
           </Routes>
         </Container>
